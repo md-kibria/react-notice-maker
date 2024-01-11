@@ -11,6 +11,7 @@ function App() {
 
   const [notice, setNotice] = useState('')
   const [author, setAuthor] = useState('')
+  const [applicant, setApplicant] = useState('অনুরোধক্রমে')
 
   useEffect(() => {
     date.current.innerHTML = `Created On: ${d}`;
@@ -18,10 +19,14 @@ function App() {
     if(localStorage.getItem('nm_author')) {
       setAuthor(localStorage.getItem('nm_author'));
     }
+    
+    if(localStorage.getItem('applicant')) {
+      setAuthor(localStorage.getItem('applicant'));
+    }
   }, [])
 
   useEffect(() => {
-    html2canvas(main.current).then(function(canvas) {
+    html2canvas(main.current, {scale:2}).then(function(canvas) {
       const imageData = canvas.toDataURL("image/jpg");
       const newData = imageData.replace(/^data:image\/jpg/, "data:application/octet-stream");
 
@@ -30,6 +35,11 @@ function App() {
       btn.current.setAttribute("href", newData);
     })
   }, [notice, author])
+
+  const handleApplicant = (e) => {
+    setApplicant(e.target.value)
+    localStorage.setItem('applicant', e.target.value);
+  }
 
   const handleAuthor = (e) => {
     setAuthor(e.target.value)
@@ -41,6 +51,7 @@ function App() {
       <h1>Notice Maker <span>(Mgt&Mkt Group)</span></h1>
       <div className="controls">
         <textarea onChange={(e) => setNotice(e.target.value)} value={notice} placeholder='তোমার নোটিশ লেখ' />
+        <input type="text" onChange={handleApplicant} value={applicant} placeholder='নিবেদক, অনুরোধক্রমে' />
         <input type="text" onChange={handleAuthor} value={author} placeholder='তোমার নাম লেখ' />
       </div>
       
@@ -49,6 +60,7 @@ function App() {
         <img src={Photo} alt="" />
         <p className="date">{new Date().toLocaleDateString('bn')}</p>
         <p className="notice">{notice}</p>
+        <p className="applicant">{applicant}</p>
         <p className="author">{author}</p>
         <p ref={date} className="create"></p>
       </div>
